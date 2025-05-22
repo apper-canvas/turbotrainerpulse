@@ -69,13 +69,13 @@ const Home = () => {
       <section className="relative overflow-hidden bg-gradient-to-br from-primary/90 to-primary-dark text-white">
         <div className="absolute inset-0 opacity-10">
           <svg className="h-full w-full" viewBox="0 0 100 100" preserveAspectRatio="none">
+            <defs>
+              <pattern id="grid-pattern" width="10" height="10" patternUnits="userSpaceOnUse">
+                <path d="M 10 0 L 0 0 0 10" fill="none" stroke="white" strokeWidth="0.5" />
+              </pattern>
+            </defs>
             <path d="M0,0 L100,0 L100,100 L0,100 Z" fill="url(#grid-pattern)" />
           </svg>
-          <defs>
-            <pattern id="grid-pattern" width="10" height="10" patternUnits="userSpaceOnUse">
-              <path d="M 10 0 L 0 0 0 10" fill="none" stroke="white" strokeWidth="0.5" />
-            </pattern>
-          </defs>
         </div>
         <div className="container mx-auto px-4 py-20 md:py-32 relative z-10">
           <div className="flex flex-col md:flex-row items-center">
