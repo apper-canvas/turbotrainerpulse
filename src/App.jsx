@@ -5,6 +5,7 @@ import { Sun, Moon, Menu, X, LogOut } from 'lucide-react';
 import { AnimatePresence, motion } from 'framer-motion';
 import Home from './pages/Home';
 import NotFound from './pages/NotFound';
+import Workouts from './pages/Workouts';
 import Login from './pages/Login';
 
 function App() {
@@ -152,6 +153,7 @@ function App() {
           <Routes location={location} key={location.pathname}>
             <Route path="/" element={<Home />} />
             <Route path="/login" element={isAuthenticated ? <Navigate to="/dashboard" /> : <Login />} />
+            <Route path="/workouts" element={isAuthenticated ? <Workouts /> : <Navigate to="/login" />} />
             <Route path="/signup" element={isAuthenticated ? <Navigate to="/dashboard" /> : <Login />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
