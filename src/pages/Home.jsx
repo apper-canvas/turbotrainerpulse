@@ -57,9 +57,6 @@ const Home = () => {
     },
     {
       id: 'reminders',
-            </a>
-            <a href="/login" className="btn btn-outline flex items-center justify-center">
-              Login <ArrowRight className="ml-2" size={18} />
       icon: BellIcon,
       title: 'Client Reminders',
       description: 'Send automated notifications to clients about upcoming sessions, missed workouts, or achievement of milestones.'
