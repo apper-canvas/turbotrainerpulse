@@ -1,10 +1,11 @@
-import { useState, useEffect } from 'react';
-import { Routes, Route, useLocation } from 'react-router-dom';
+import { useState, useEffect, useCallback } from 'react';
+import { Routes, Route, useLocation, Navigate } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
-import { Sun, Moon, Menu, X } from 'lucide-react';
+import { Sun, Moon, Menu, X, LogOut } from 'lucide-react';
 import { AnimatePresence, motion } from 'framer-motion';
 import Home from './pages/Home';
 import NotFound from './pages/NotFound';
+import Login from './pages/Login';
 
 function App() {
   const [darkMode, setDarkMode] = useState(() => {
@@ -12,8 +13,19 @@ function App() {
     return savedMode ? JSON.parse(savedMode) : window.matchMedia('(prefers-color-scheme: dark)').matches;
   });
   
+  const [isAuthenticated, setIsAuthenticated] = useState(() => {
+    return localStorage.getItem('fittrack_token') !== null;
+  });
+  
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const location = useLocation();
+  
+  const handleLogout = useCallback(() => {
+    localStorage.removeItem('fittrack_token');
+    localStorage.removeItem('fittrack_user');
+    setIsAuthenticated(false);
+    toast.success("Logged out successfully");
+  }, []);
   
   useEffect(() => {
     if (darkMode) {
@@ -23,6 +35,10 @@ function App() {
     }
     localStorage.setItem('darkMode', JSON.stringify(darkMode));
   }, [darkMode]);
+
+  useEffect(() => {
+    setIsAuthenticated(localStorage.getItem('fittrack_token') !== null);
+  }, [location.pathname]);
   
   useEffect(() => {
     setMobileMenuOpen(false);
@@ -33,11 +49,12 @@ function App() {
   };
 
   const navLinks = [
-    { name: "Home", path: "/" },
-    { name: "Clients", path: "/clients" },
-    { name: "Workouts", path: "/workouts" },
-    { name: "Dashboard", path: "/dashboard" }
+    { name: "Home", path: "/" }
   ];
+  
+  if (isAuthenticated) {
+    navLinks.push(...[{ name: "Dashboard", path: "/dashboard" }, { name: "Clients", path: "/clients" }, { name: "Workouts", path: "/workouts" }]);
+  }
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -68,6 +85,23 @@ function App() {
             </div>
             
             <div className="flex items-center space-x-4">
+              {isAuthenticated ? (
+                <button
+                  onClick={handleLogout}
+                  className="flex items-center text-surface-600 dark:text-surface-300 hover:text-primary dark:hover:text-primary"
+                  aria-label="Logout"
+                >
+                  <LogOut size={18} className="mr-1" />
+                  <span className="hidden sm:inline">Logout</span>
+                </button>
+              ) : (
+                <a
+                  href="/login"
+                  className="text-surface-600 dark:text-surface-300 hover:text-primary dark:hover:text-primary px-3 py-2 text-sm font-medium"
+                >
+                  Login / Signup
+                </a>
+              )}
               <button
                 onClick={toggleDarkMode}
                 className="p-2 rounded-full bg-surface-100 dark:bg-surface-800 text-surface-600 dark:text-surface-300 hover:bg-surface-200 dark:hover:bg-surface-700 focus:outline-none focus:ring-2 focus:ring-primary"
@@ -117,6 +151,8 @@ function App() {
         <AnimatePresence mode="wait">
           <Routes location={location} key={location.pathname}>
             <Route path="/" element={<Home />} />
+            <Route path="/login" element={isAuthenticated ? <Navigate to="/dashboard" /> : <Login />} />
+            <Route path="/signup" element={isAuthenticated ? <Navigate to="/dashboard" /> : <Login />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </AnimatePresence>
